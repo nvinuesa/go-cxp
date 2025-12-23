@@ -10,4 +10,4 @@ Go implementation of FIDO Credential Exchange Protocol (CXP/CXF)
 
 ## License
 
-MIT
+AGPLv3

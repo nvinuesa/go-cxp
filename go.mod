@@ -1,4 +1,4 @@
-module github.com/nicolas/go-credential-exchange
+module github.com/nvinuesa/go-credential-exchange
 
 go 1.26rc1
 
