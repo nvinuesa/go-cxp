@@ -70,3 +70,40 @@ func (p *Passkey) UnmarshalJSON(data []byte) error {
 	// For MVP, this is a placeholder
 	return errors.New("unmarshal not yet implemented")
 }
+
+// Password represents a username/password credential.
+type Password struct {
+	IdField   string    `json:"id"`
+	TypeField string    `json:"type"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	URL       string    `json:"url"`
+	Name      string    `json:"name,omitempty"`
+	Notes     string    `json:"notes,omitempty"`
+	Created   time.Time `json:"created"`
+	Modified  time.Time `json:"modified,omitempty"`
+}
+
+// Type returns the credential type identifier.
+func (p *Password) Type() string {
+	return "password"
+}
+
+// ID returns the unique identifier for this credential.
+func (p *Password) ID() string {
+	return p.IdField
+}
+
+// Validate checks that all required fields are present and valid.
+func (p *Password) Validate() error {
+	if p.Username == "" {
+		return errors.New("password: username is required")
+	}
+	if p.Password == "" {
+		return errors.New("password: password is required")
+	}
+	if p.URL == "" {
+		return errors.New("password: url is required")
+	}
+	return nil
+}
