@@ -1,4 +1,4 @@
-# go-credential-exchange
+# go-cxp
 
 Go implementation of FIDO Credential Exchange Protocol (CXP/CXF)
 

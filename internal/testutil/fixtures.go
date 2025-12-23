@@ -9,7 +9,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/nvinuesa/go-credential-exchange/pkg/types"
+	"github.com/nvinuesa/go-cxp/pkg/types"
 )
 
 // GenerateTestPasskey creates a valid passkey with random but realistic values.
