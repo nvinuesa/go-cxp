@@ -5,7 +5,7 @@ bin/
 *.dll
 *.so
 *.dylib
-cxp-tool
+/go-cxp
 
 # Test binary, built with `go test -c`
 *.test
@@ -25,3 +25,6 @@ coverage.html
 # Test artifacts
 testdata/
 *.cxf
+
+# SPEC
+spec/
