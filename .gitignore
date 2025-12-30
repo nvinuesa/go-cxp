@@ -5,7 +5,6 @@ bin/
 *.dll
 *.so
 *.dylib
-/go-cxp
 
 # Test binary, built with `go test -c`
 *.test
@@ -28,3 +27,4 @@ testdata/
 
 # SPEC
 spec/
+AGENTS.md
