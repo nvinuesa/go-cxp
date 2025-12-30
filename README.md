@@ -74,10 +74,6 @@ func main() {
 - `KnownExtension` - Protocol extensions (shared)
 - `ErrorCode` - Error codes for failed exchanges
 
-## Requirements
-
-- Go 1.21+
-
 ## License
 
 AGPLv3
