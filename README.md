@@ -2,6 +2,8 @@
 
 Go implementation of the FIDO Alliance Credential Exchange Protocol (CXP) v1.0.
 
+[![Test](https://github.com/nvinuesa/go-cxp/actions/workflows/test.yml/badge.svg)](https://github.com/nvinuesa/go-cxp/actions/workflows/test.yml)
+
 ## Overview
 
 This package provides Go type definitions for the CXP protocol messages used for secure credential exchange between providers. It implements the types defined in the [CXP specification](https://fidoalliance.org/specs/cx/cxp-v1.0-wd-20241003.html).
@@ -76,4 +78,4 @@ func main() {
 
 ## License
 
-AGPLv3
+See [LICENSE](LICENSE) file.
