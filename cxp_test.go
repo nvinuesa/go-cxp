@@ -203,6 +203,9 @@ func TestExportRequestSerialization(t *testing.T) {
 				Aead: HpkeAeadAes256Gcm,
 			},
 		},
+		Archive: []ArchiveAlgorithm{
+			ArchiveAlgorithmDeflate,
+		},
 		CredentialTypes: []CredentialType{
 			CredentialTypePasskey,
 			CredentialTypeBasicAuth,
@@ -223,6 +226,9 @@ func TestExportRequestSerialization(t *testing.T) {
 		t.Fatalf("Unmarshal to map failed: %v", err)
 	}
 
+	if _, ok := m["archive"]; !ok {
+		t.Error("expected 'archive' in JSON")
+	}
 	if _, ok := m["credentialTypes"]; !ok {
 		t.Error("expected camelCase 'credentialTypes' in JSON")
 	}
@@ -241,6 +247,9 @@ func TestExportRequestSerialization(t *testing.T) {
 	if got.Importer != req.Importer {
 		t.Errorf("Importer: got %v, want %v", got.Importer, req.Importer)
 	}
+	if len(got.Archive) != 1 || got.Archive[0] != ArchiveAlgorithmDeflate {
+		t.Errorf("Archive: got %v, want [deflate]", got.Archive)
+	}
 	if len(got.CredentialTypes) != 2 {
 		t.Errorf("CredentialTypes: got %d items, want 2", len(got.CredentialTypes))
 	}
@@ -258,7 +267,7 @@ func TestExportRequestOmitsEmptyOptionalFields(t *testing.T) {
 				Aead: HpkeAeadAes256Gcm,
 			},
 		},
-		// No CredentialTypes or KnownExtensions
+		// No Archive, CredentialTypes or KnownExtensions
 	}
 
 	data, err := json.Marshal(req)
@@ -271,6 +280,9 @@ func TestExportRequestOmitsEmptyOptionalFields(t *testing.T) {
 		t.Fatalf("Unmarshal to map failed: %v", err)
 	}
 
+	if _, ok := m["archive"]; ok {
+		t.Error("expected 'archive' to be omitted when empty")
+	}
 	if _, ok := m["credentialTypes"]; ok {
 		t.Error("expected 'credentialTypes' to be omitted when empty")
 	}
@@ -289,12 +301,22 @@ func TestExportResponseSerialization(t *testing.T) {
 			Kdf:  HpkeKdfHkdfSha256,
 			Aead: HpkeAeadAes256Gcm,
 		},
+		Archive: ArchiveAlgorithmDeflate,
 		Payload: "SGVsbG8gV29ybGQ", // base64url encoded
 	}
 
 	data, err := json.Marshal(resp)
 	if err != nil {
 		t.Fatalf("Marshal failed: %v", err)
+	}
+
+	// Check that JSON contains archive
+	var m map[string]interface{}
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("Unmarshal to map failed: %v", err)
+	}
+	if _, ok := m["archive"]; !ok {
+		t.Error("expected 'archive' in JSON")
 	}
 
 	var got ExportResponse
@@ -308,8 +330,40 @@ func TestExportResponseSerialization(t *testing.T) {
 	if got.Exporter != resp.Exporter {
 		t.Errorf("Exporter: got %v, want %v", got.Exporter, resp.Exporter)
 	}
+	if got.Archive != ArchiveAlgorithmDeflate {
+		t.Errorf("Archive: got %v, want %v", got.Archive, ArchiveAlgorithmDeflate)
+	}
 	if got.Payload != resp.Payload {
 		t.Errorf("Payload: got %v, want %v", got.Payload, resp.Payload)
+	}
+}
+
+func TestExportResponseOmitsEmptyArchive(t *testing.T) {
+	resp := ExportResponse{
+		Version:  VersionV0,
+		Exporter: "exporter.example.com",
+		Hpke: HpkeParameters{
+			Mode: HpkeModeBase,
+			Kem:  HpkeKemDhX25519,
+			Kdf:  HpkeKdfHkdfSha256,
+			Aead: HpkeAeadAes256Gcm,
+		},
+		Payload: "SGVsbG8gV29ybGQ",
+		// No Archive
+	}
+
+	data, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("Marshal failed: %v", err)
+	}
+
+	var m map[string]interface{}
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("Unmarshal to map failed: %v", err)
+	}
+
+	if _, ok := m["archive"]; ok {
+		t.Error("expected 'archive' to be omitted when empty")
 	}
 }
 
@@ -397,6 +451,21 @@ func TestHpkeModeConstants(t *testing.T) {
 	for _, tt := range tests {
 		if string(tt.mode) != tt.want {
 			t.Errorf("HpkeMode: got %s, want %s", tt.mode, tt.want)
+		}
+	}
+}
+
+func TestArchiveAlgorithmConstants(t *testing.T) {
+	tests := []struct {
+		alg  ArchiveAlgorithm
+		want string
+	}{
+		{ArchiveAlgorithmDeflate, "deflate"},
+	}
+
+	for _, tt := range tests {
+		if string(tt.alg) != tt.want {
+			t.Errorf("ArchiveAlgorithm: got %s, want %s", tt.alg, tt.want)
 		}
 	}
 }

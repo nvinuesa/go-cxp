@@ -14,19 +14,21 @@ import (
 
 // ExportRequest is sent by the importing provider to request credentials from an exporting provider.
 type ExportRequest struct {
-	Version         Version          `json:"version"`
-	Hpke            []HpkeParameters `json:"hpke"`
-	Importer        string           `json:"importer"`
-	CredentialTypes []CredentialType `json:"credentialTypes,omitempty"`
-	KnownExtensions []KnownExtension `json:"knownExtensions,omitempty"`
+	Version         Version            `json:"version"`
+	Hpke            []HpkeParameters   `json:"hpke"`
+	Importer        string             `json:"importer"`
+	Archive         []ArchiveAlgorithm `json:"archive,omitempty"`
+	CredentialTypes []CredentialType   `json:"credentialTypes,omitempty"`
+	KnownExtensions []KnownExtension   `json:"knownExtensions,omitempty"`
 }
 
 // ExportResponse is sent by the exporting provider containing encrypted credentials.
 type ExportResponse struct {
-	Version  Version        `json:"version"`
-	Hpke     HpkeParameters `json:"hpke"`
-	Exporter string         `json:"exporter"`
-	Payload  string         `json:"payload"` // base64url encoded
+	Version  Version          `json:"version"`
+	Hpke     HpkeParameters   `json:"hpke"`
+	Exporter string           `json:"exporter"`
+	Archive  ArchiveAlgorithm `json:"archive,omitempty"`
+	Payload  string           `json:"payload"` // base64url encoded
 }
 
 // ErrorResponse is sent by the exporting provider when an error occurs.
@@ -104,6 +106,15 @@ type KnownExtension string
 const (
 	// KnownExtensionShared represents the shared credentials extension.
 	KnownExtensionShared KnownExtension = "shared"
+)
+
+// ArchiveAlgorithm represents an archiving algorithm for compressing credentials.
+// See: https://fidoalliance.org/specs/cx/cxp-v1.0-wd-20240522.html#dom-archivealgorithm-deflate
+type ArchiveAlgorithm string
+
+const (
+	// ArchiveAlgorithmDeflate uses the DEFLATE algorithm defined in RFC1951.
+	ArchiveAlgorithmDeflate ArchiveAlgorithm = "deflate"
 )
 
 // HpkeParameters defines the HPKE configuration for encryption.
